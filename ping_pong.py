@@ -3,7 +3,7 @@ mw = pg.display.set_mode((500, 500))
 clock = pg.time.Clock()
 game = True
 
-class GameSprite(sprite.Sprite):
+class GameSprite(pg.sprite.Sprite):
     def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height):
         super().__init__()
         self.image = transform.scale(image.load(sprite_image), (width, height))
