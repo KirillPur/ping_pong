@@ -23,5 +23,9 @@ class Player(GameSprite):
             self.rect.y += SPEED
 
 while game == True:
+    for event in pg.event.get():
+        if event.type == pg.QUIT:
+            game = False
+
     pg.display.update()
     clock.tick(60)
