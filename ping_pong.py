@@ -8,7 +8,7 @@ clock = pg.time.Clock()
 game = True
 
 class GameSprite(pg.sprite.Sprite):
-    def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height, key_up = pg.K_UP, key_down = pg.K_DOWN):
+    def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height, key_up = pg.K_UP, key_down = pg.K_DOWN, dirrect_x = 1, dirrect_y = 1):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(sprite_image), (width, height))
         self.speed = sprite_speed
@@ -17,6 +17,8 @@ class GameSprite(pg.sprite.Sprite):
         self.rect.y = sprite_y
         self.key_up = key_up
         self.key_down = key_down
+        self.dirrect_x = dirrect_x
+        self.dirrect_y = dirrect_y
     def reset(self):
         mw.blit(self.image, (self.rect.x, self.rect.y))
     def fill(self):
@@ -30,8 +32,22 @@ class Player(GameSprite):
         if keys_pressed[self.key_down] and self.rect.y < WIN_HEIGHT - self.speed - self.rect.height:
             self.rect.y += self.speed
 
+class Ball(GameSprite):
+    def update(self):
+        if self.rect.colliderect(player_1.rect) or self.rect.colliderect(player_2.rect):
+            self.dirrect_x *= -1
+        if self.rect.y <= 0 or self.rect.y >= WIN_HEIGHT - self.rect.height:
+            self.dirrect_y *= -1
+        #Заменить на выйгрыш и проигрыш
+        if self.rect.x <= 0 or self.rect.x >= WIN_WIDTH - self.rect.width:
+            self.dirrect_x *= -1
+        #!!!
+        self.rect.x += self.speed * self.dirrect_x
+        self.rect.y += self.speed * self.dirrect_y
+
 player_1 = Player("racket.png",10,100,4,50,150,pg.K_w,pg.K_s)
 player_2 = Player("racket.png",440,200,4,50,150)
+ball = Ball("tenis_ball.png",440,200,4,50,150)
 
 while game == True:
     for event in pg.event.get():
@@ -40,12 +56,15 @@ while game == True:
     
     player_1.fill()
     player_2.fill()
+    ball.fill()
 
     player_1.update()
     player_2.update()
+    ball.update()
 
     player_1.reset()
     player_2.reset()
+    ball.reset()
 
     pg.display.update()
     clock.tick(60)
