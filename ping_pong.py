@@ -1,10 +1,12 @@
 import pygame as pg
+pg.font.init()
 WIN_WIDTH = 500
 WIN_HEIGHT = 500
 BLACK = (0,0,0)
 bg = BLACK
 mw = pg.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 clock = pg.time.Clock()
+font = pg.font.SysFont("Arial", 40)
 game = True
 
 class GameSprite(pg.sprite.Sprite):
@@ -48,6 +50,8 @@ class Ball(GameSprite):
 player_1 = Player("racket.png",10,100,4,50,150,pg.K_w,pg.K_s)
 player_2 = Player("racket.png",440,200,4,50,150)
 ball = Ball("tenis_ball.png",440,200,4,50,50)
+count_down_pl_1 = font.render("Счёт:", True, (100,100,100))
+count_down_pl_2 = font.render("Счёт:", True, (100,100,100))
 
 while game == True:
     for event in pg.event.get():
@@ -65,6 +69,9 @@ while game == True:
     player_1.reset()
     player_2.reset()
     ball.reset()
+
+    mw.blit(count_down_pl_1,(20,20))
+    mw.blit(count_down_pl_2,(370,20))
 
     pg.display.update()
     clock.tick(60)
