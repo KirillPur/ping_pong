@@ -8,7 +8,7 @@ clock = pg.time.Clock()
 game = True
 
 class GameSprite(pg.sprite.Sprite):
-    def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height, key_up = pg.K_UP, key_down = pg.K_DOWN, dirrect_x = 1, dirrect_y = 1):
+    def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height, key_up = pg.K_UP, key_down = pg.K_DOWN):
         super().__init__()
         self.image = pg.transform.scale(pg.image.load(sprite_image), (width, height))
         self.speed = sprite_speed
@@ -17,8 +17,8 @@ class GameSprite(pg.sprite.Sprite):
         self.rect.y = sprite_y
         self.key_up = key_up
         self.key_down = key_down
-        self.dirrect_x = dirrect_x
-        self.dirrect_y = dirrect_y
+        self.dirrect_x = 1
+        self.dirrect_y = 1
     def reset(self):
         mw.blit(self.image, (self.rect.x, self.rect.y))
     def fill(self):
@@ -47,13 +47,13 @@ class Ball(GameSprite):
 
 player_1 = Player("racket.png",10,100,4,50,150,pg.K_w,pg.K_s)
 player_2 = Player("racket.png",440,200,4,50,150)
-ball = Ball("tenis_ball.png",440,200,4,50,150)
+ball = Ball("tenis_ball.png",440,200,4,50,50)
 
 while game == True:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             game = False
-    
+
     player_1.fill()
     player_2.fill()
     ball.fill()
