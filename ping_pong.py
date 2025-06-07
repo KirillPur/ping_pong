@@ -1,4 +1,5 @@
 import pygame as pg
+from time import *
 pg.font.init()
 WIN_WIDTH = 500
 WIN_HEIGHT = 500
@@ -11,11 +12,13 @@ bg = BLACK
 mw = pg.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 clock = pg.time.Clock()
 font = pg.font.SysFont("Arial", 40)
+win_text = "Победил игрок под номером "
 
 class Game():
-    count_pl_1 = 0
+    count_pl_1 = 34
     count_pl_2 = 0
     run = True
+    finish = False
 
 class GameSprite(pg.sprite.Sprite):
     def __init__(self, sprite_image, sprite_x, sprite_y, sprite_speed, width, height, key_up = pg.K_UP, key_down = pg.K_DOWN):
@@ -68,15 +71,15 @@ class Area():
         #pg.draw.rect(mw,self.fill_color,self.rect)
 
 class Label(Area):
-    def __init__(self,text,x=0,y=0,width=10,height=10,bg_color=bg,fsize=12, text_color=BLACK,border_color=BLUE):
+    def __init__(self,text,x=0,y=0,width=10,height=10,bg_color=bg,fsize=12,text_color=BLACK,border_color=BLUE,border_size=0):
         super().__init__(x=x,y=y,width=width,height=height,color=bg_color)
         self.text_color = text_color
         self.text = text
         self.fsize = fsize
         self.border_color = border_color
+        self.border_size = border_size
         self.set_text(text,fsize=fsize, text_color=text_color)
-        self.text_draw_border()
-    
+
     def set_text(self,text,fsize=None, text_color=None):
         if fsize is None:
             fsize = self.fsize
@@ -89,9 +92,11 @@ class Label(Area):
     def draw(self,shift_x=0, shift_y=0):
         pg.draw.rect(mw,self.fill_color,self.rect)
         mw.blit(self.image, (self.rect.x + shift_x, self.rect.y + shift_y))
+        if self.border_size > 0:
+            self.text_draw_border()
     
     def text_draw_border(self,border_color=BLUE):
-        pg.draw.rect(mw,self.border_color,self.rect,10)
+        pg.draw.rect(mw,self.border_color,self.rect,self.border_size)
     
     def color_change(self,text_color):
         self.text_color = text_color
@@ -100,15 +105,17 @@ game = Game()
 player_1 = Player("racket.png",10,100,4,50,150,pg.K_w,pg.K_s)
 player_2 = Player("racket.png",440,200,4,50,150)
 ball = Ball("tenis_ball.png",440,200,4,50,50)
-count_down_pl_1 = Label("Счёт: 0", 20, 20, 140, 30, bg_color = BLACK, text_color=GRAY,fsize = 50)
-count_down_pl_2 = Label("Счёт: 0", 350, 20, 140, 30, bg_color = BLACK, text_color=GRAY,fsize = 50)
+count_down_pl_1 = Label("Счёт: 0", 20, 20, 140, 30, bg_color = BLACK, text_color = GRAY,fsize = 50)
+count_down_pl_2 = Label("Счёт: 0", 350, 20, 140, 30, bg_color = BLACK, text_color = GRAY,fsize = 50)
+win = Label(win_text,60,200,50,50,bg_color = BLACK, text_color = GRAY,fsize = 35)
 
 while game.run == True:
+
     for event in pg.event.get():
         if event.type == pg.QUIT:
             game.run = False
 
-    if game.count_pl_1 >= 10 or game.count_pl_2 >= 10:
+    if game.finish == False:
         if game.count_pl_1 >= 9:
             count_down_pl_1.color_change(GREEN)
         if game.count_pl_2 >= 9:
@@ -122,20 +129,34 @@ while game.run == True:
         if game.count_pl_2 >= 29:
             count_down_pl_2.color_change(RED)
 
-    count_down_pl_1.draw()
-    count_down_pl_2.draw()
+        count_down_pl_1.draw()
+        count_down_pl_2.draw()
 
-    player_1.fill()
-    player_2.fill()
-    ball.fill()
+        player_1.fill()
+        player_2.fill()
+        ball.fill()
 
-    player_1.update()
-    player_2.update()
-    ball.update()
+        player_1.update()
+        player_2.update()
+        ball.update()
 
-    player_1.reset()
-    player_2.reset()
-    ball.reset()
+        player_1.reset()
+        player_2.reset()
+        ball.reset()
+
+        if game.count_pl_1 >= 35:
+            win_text += "1"
+            win.set_text(win_text)
+            game.finish = True
+
+        if game.count_pl_2 >= 35:
+            win_text += "2"
+            win.set_text(win_text)
+            game.finish = True
+
+    if game.finish == True:
+        win.draw()
+        sleep(0)
 
     pg.display.update()
     clock.tick(60)
